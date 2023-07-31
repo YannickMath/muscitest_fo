@@ -1,39 +1,73 @@
-'use client'
 import Modal from "./Modal";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addUsernameToStore } from "@/reducer/user.slice";
+import { MdDarkMode, MdOutlineDarkMode } from "react-icons/md";
 
-export default function Welcome() {
-const dispatch = useDispatch();
+export default function Welcome({isDarkMode, setIsDarkMode, toogleDarkMode}) {
+  const dispatch = useDispatch();
+  const username = useSelector((state) => state.user.username);
 
-    const [modal, setModal] = useState(false);
+  // console.log("username: ", username)
 
-    const handleLoginButton = () => {
-        setModal(true);
-    }
+  const [modal, setModal] = useState(false);
+  const [userName, setUserName] = useState("");
+  // const [isDarkMode, setIsDarkMode] = useState(false);
 
-    const handleLoginSubmit = () => {
-        setModal(false);
+  const handleOnChangeUserName = (e) => {
+    setUserName(e.target.value);
+  };
 
-        dispatch({
-            type: "ADD_USERNAME_TO_STORE",
-            payload: "John Doe",
-        });
+  const handleLoginButton = () => {
+    setModal(true);
+  };
 
-    }
+  const handleLoginSubmit = () => {
+    setModal(false);
+    dispatch(addUsernameToStore(userName));
+  };
+  // const toogleDarkMode = () => {
+  //   const newDarkMode = !isDarkMode;
+  //   setIsDarkMode(newDarkMode);
+  //   if (newDarkMode) {
+  //     document.body.classList.add("dark");
+  //   } else {
+  //     document.body.classList.remove("dark");
+  //   }
+  // };
+  console.log("isDarkMode: ", isDarkMode);
 
-
-
-    return (
-        <div class="p-5">
-            <h1>Home Page</h1>
-            <button 
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-                onClick={handleLoginSubmit}
-            >
-                Button
-            </button>
-            {modal && <Modal setModal={setModal}/>}
-        </div>
-    );
+  return (
+    <div className="h-screen w-full p-5 dark:bg-black bg-white">
+      <h1>Home Page</h1>
+      <button
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+        onClick={handleLoginButton}
+      >
+        Button
+      </button>
+      {modal && (
+        <Modal
+          setModal={setModal}
+          handleLoginSubmit={handleLoginSubmit}
+          handleOnChangeUserName={handleOnChangeUserName}
+          userName={userName}
+          setUserName={setUserName}
+        />
+      )}
+      <div>
+        {!isDarkMode ? (
+          <MdDarkMode
+            className=" hover:cursor-pointer  "
+            onClick={toogleDarkMode}
+          />
+        ) : (
+          <MdOutlineDarkMode
+            className=" hover:cursor-pointer dark:text-white "
+            onClick={toogleDarkMode}
+          />
+        )}
+      </div>
+    </div>
+  );
 }

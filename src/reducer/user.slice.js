@@ -1,4 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
+// import { ADD_USERNAME_TO_STORE } from "../constant/actionTypes";
+
 const initialState = {
     username: null,
 };
@@ -9,6 +11,7 @@ export const userSlice = createSlice({
     reducers: {
         addUsernameToStore: (state, action) => {
             state.username = action.payload;
+            console.log("addUsernameToStore action: ", action);
         },
     },
 });

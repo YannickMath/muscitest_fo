@@ -9,11 +9,12 @@ import { persistReducer } from 'redux-persist';
 
 // importe votre réducteur personnalisé
 import user from '../reducer/user.slice';
+import userSlice from '../reducer/user.slice';
 
 // utilisation de combineReducers pour combiner plusieurs réducteurs en un seul. 
 // Ici, nous n'avons que myReducer, mais vous pouvez ajouter d'autres réducteurs au besoin.
 const reducers = combineReducers({
-  user,
+  user: userSlice,
   // add more reducers here
 });
 
