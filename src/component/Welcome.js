@@ -12,7 +12,18 @@ export default function Welcome({isDarkMode, setIsDarkMode, toogleDarkMode}) {
 
   const [modal, setModal] = useState(false);
   const [userName, setUserName] = useState("");
-  // const [isDarkMode, setIsDarkMode] = useState(false);
+
+
+  useEffect(() => {
+    if (typeof DZ !== 'undefined') {
+      DZ.ready(function(sdk_options) {
+        console.log('DZ SDK is ready', sdk_options);
+      });
+    } else {
+      console.error('DZ is not defined');
+    }
+  }, []);
+  
 
   const handleOnChangeUserName = (e) => {
     setUserName(e.target.value);
@@ -26,22 +37,14 @@ export default function Welcome({isDarkMode, setIsDarkMode, toogleDarkMode}) {
     setModal(false);
     dispatch(addUsernameToStore(userName));
   };
-  // const toogleDarkMode = () => {
-  //   const newDarkMode = !isDarkMode;
-  //   setIsDarkMode(newDarkMode);
-  //   if (newDarkMode) {
-  //     document.body.classList.add("dark");
-  //   } else {
-  //     document.body.classList.remove("dark");
-  //   }
-  // };
+  
   console.log("isDarkMode: ", isDarkMode);
 
   return (
-    <div className="h-screen w-full p-5 dark:bg-black bg-white">
+    <div classNameName="h-screen w-full p-5 dark:bg-black bg-white">
       <h1>Home Page</h1>
       <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+        classNameName="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
         onClick={handleLoginButton}
       >
         Button
@@ -58,12 +61,12 @@ export default function Welcome({isDarkMode, setIsDarkMode, toogleDarkMode}) {
       <div>
         {!isDarkMode ? (
           <MdDarkMode
-            className=" hover:cursor-pointer  "
+            classNameName=" hover:cursor-pointer  "
             onClick={toogleDarkMode}
           />
         ) : (
           <MdOutlineDarkMode
-            className=" hover:cursor-pointer dark:text-white "
+            classNameName=" hover:cursor-pointer dark:text-white "
             onClick={toogleDarkMode}
           />
         )}

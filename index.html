@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="dz-root"></div>
+    <script>
+      window.dzAsyncInit = function() {
+    	DZ.init({
+    		appId  : '623864',
+    		channelUrl : 'http://localhost:3000'
+    	});
+      };
+      (function() {
+    	var e = document.createElement('script');
+    	e.src = 'https://e-cdn-files.dzcdn.net/js/min/dz.js';
+    	e.async = true;
+    	document.getElementById('dz-root').appendChild(e);
+      }());
+    </script>
+</body>
+</html>
