@@ -8,7 +8,8 @@ import SpConnection from "../spotify/SpConnection";
 import SearchArtistByName from "../spotify/SearchArtistByName";
 import Tracks from "./Tracks";
 import SearchTracksById from "@/spotify/SearchTracksById";
-import Player from "../spotify/Player";
+import ReactPlayer from "react-player";
+
 
 export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
   const dispatch = useDispatch();
@@ -62,44 +63,45 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
     dispatch(addUsernameToStore(userName));
   };
 
-// Effet pour mettre à jour artistIds chaque fois que artists change
-useEffect(() => {
-  setArtistIds(artists.map(artist => artist.id));
-}, [artists]);
-console.log("artistIds", artistIds)
+  // Effet pour mettre à jour artistIds chaque fois que artists change
+  useEffect(() => {
+    setArtistIds(artists.map((artist) => artist.id));
+  }, [artists]);
+  // console.log("artistIds", artistIds)
 
-// Effet pour appeler SearchTracksById chaque fois que accessToken ou artistIds change
-useEffect(() => {
-  if (accessToken && artistIds.length > 0) {
-    // Fonction pour récupérer les pistes pour un ensemble d'artistIds
-    const fetchTracks = async () => {
-      const newTracks = [];
-      for (const artistId of artistIds) {
-        const trackData = await SearchTracksById(accessToken, artistId);
-        newTracks.push(...trackData); // Assumant que trackData est un tableau
-      }
-      setTracks(newTracks);
-      console.log("trackData", trackData)
-      console.log("newTracks", newTracks)
-    };
+  // Effet pour appeler SearchTracksById chaque fois que accessToken ou artistIds change
+  useEffect(() => {
+    if (accessToken && artistIds.length > 0) {
+      // Fonction pour récupérer les pistes pour un ensemble d'artistIds
+      const fetchTracks = async () => {
+        const newTracks = [];
+        for (const artistId of artistIds) {
+          const trackData = await SearchTracksById(accessToken, artistId);
+          console.log("trackData", trackData); // Ajoutez ce log pour examiner la structure de trackData
 
-    // Appeler la fonction pour récupérer les pistes
-    fetchTracks();
-  }
-}, [accessToken, artistIds]);
+          if (trackData && trackData.tracks && Array.isArray(trackData.tracks)) { // Vérification ajoutée pour s'assurer que trackData.tracks est un tableau
+            newTracks.push(...trackData.tracks);
+          }
+        }
+        setTracks(newTracks);
+      };
 
+      fetchTracks();
+    }
+  }, [accessToken, artistIds]);
 
-//on map l'état tracks pour afficher les tracks
-const track = tracks.map((track, index) => {
-  return (
-    <div className=" h-1/3" key={index}>
-      {tracks && tracks.length > 0 && (
-        <p>{track}</p>
-      )}
-    </div>
-  );
-});
-
+  //on map l'état tracks pour afficher les tracks
+  console.log("tracks", tracks);
+  const track = tracks.map((track, index) => {
+    return (
+      <div className=" h-1/3" key={index}>
+        <audio controls>
+        {tracks && tracks.length > 0 && <source src={track.preview_url} type="audio/mpeg" />}
+        {console.log("track.preview_url", track.preview_url)}
+        </audio>
+      </div>
+    );
+  });
 
   //on map l'état artistImages pour afficher les images
   const artistsResults = artists.map((artist, index) => {
@@ -109,7 +111,7 @@ const track = tracks.map((track, index) => {
           <Image
             src={artist.images[0].url}
             alt="Artist"
-            width={120}
+            width={140}
             height={120}
             className="inline-block rounded-full"
           />
@@ -122,56 +124,67 @@ const track = tracks.map((track, index) => {
     );
   });
 
+  //on map sur tracks pour afficher les tracks
+  const tracksComponent = tracks.map((track, index) => (
+    <div className="h-1/3" key={index}>
+    <ReactPlayer controls url='{track.preview_url}' type="MIME" />
+
+
+      {/* Lien vers l'album sur Spotify */}
+    </div>
+  ));
 
   return (
-    <div className="h-screen w-full p-5 dark:bg-black bg-white font-sans ">
-      <h1>Home Page</h1>
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-        onClick={handleLoginButton}
-      >
-        Button
-      </button>
-      {modal && (
-        <Modal
-          setModal={setModal}
-          handleLoginSubmit={handleLoginSubmit}
-          handleOnChangeUserName={handleOnChangeUserName}
-          userName={userName}
-          setUserName={setUserName}
-        />
-      )}
+    <div className="h-screen w-full p-5 dark:bg-black bg-white font-sans flex">
       <div>
-        {!isDarkMode ? (
-          <MdDarkMode
-            className=" hover:cursor-pointer  "
-            onClick={toogleDarkMode}
-          />
-        ) : (
-          <MdOutlineDarkMode
-            className=" hover:cursor-pointer dark:text-white "
-            onClick={toogleDarkMode}
+        <h1>Home Page</h1>
+        <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+          onClick={handleLoginButton}
+        >
+          Button
+        </button>
+        {modal && (
+          <Modal
+            setModal={setModal}
+            handleLoginSubmit={handleLoginSubmit}
+            handleOnChangeUserName={handleOnChangeUserName}
+            userName={userName}
+            setUserName={setUserName}
           />
         )}
+        <div>
+          {!isDarkMode ? (
+            <MdDarkMode
+              className=" hover:cursor-pointer  "
+              onClick={toogleDarkMode}
+            />
+          ) : (
+            <MdOutlineDarkMode
+              className=" hover:cursor-pointer dark:text-white "
+              onClick={toogleDarkMode}
+            />
+          )}
+        </div>
+        <input
+          onChange={handleArtistName}
+          type="text"
+          placeholder="Search artist"
+          value={artistName}
+        />
+        <button
+          className="cursor-pointer"
+          // onClick={() => {SearchArtistByName}}
+          onClick={() => {
+            handleSearch(accessToken, artistName);
+          }}
+        >
+          Search
+        </button>
+        {artistsResults}
+        {/* <Tracks /> */}
       </div>
-      <input
-        onChange={handleArtistName}
-        type="text"
-        placeholder="Search artist"
-        value={artistName}
-      />
-      <button
-        className="cursor-pointer"
-        // onClick={() => {SearchArtistByName}}
-        onClick={() => {
-          handleSearch(accessToken, artistName);
-        }}
-      >
-        Search
-      </button>
-      {artistsResults}
-      {/* <Tracks /> */}
-      {track}
+      <div>{track}</div>
     </div>
   );
 }
