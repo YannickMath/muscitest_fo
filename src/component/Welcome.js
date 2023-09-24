@@ -23,6 +23,7 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
   const [artists, setArtists] = useState([]); // Ajout de l'état artists
   const [artistIds, setArtistIds] = useState(""); // Ajout de l'état artistId
   const [tracks, setTracks] = useState([]); // Ajout de l'état tracks
+  const [tracksByArtist, setTracksByArtist] = useState([]); // Ajout de l'état tracksByArtist
 
   //initialisation api spotify
   useEffect(() => {
@@ -77,7 +78,7 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
         const newTracks = [];
         for (const artistId of artistIds) {
           const trackData = await SearchTracksById(accessToken, artistId);
-          console.log("trackData", trackData); // Ajoutez ce log pour examiner la structure de trackData
+          // console.log("trackData", trackData);
 
           if (trackData && trackData.tracks && Array.isArray(trackData.tracks)) { // Vérification ajoutée pour s'assurer que trackData.tracks est un tableau
             newTracks.push(...trackData.tracks);
@@ -93,15 +94,19 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
   //on map l'état tracks pour afficher les tracks
   console.log("tracks", tracks);
   const track = tracks.map((track, index) => {
+    const tracksByArtistId = tracks.filter(e => e === e.artists[0].id)
+    console.log("tracksByArtistId", tracksByArtistId)
+    console.log("track.id", track.artists[0].id)
     return (
       <div className=" h-1/3" key={index}>
         <audio controls>
         {tracks && tracks.length > 0 && <source src={track.preview_url} type="audio/mpeg" />}
-        {console.log("track.preview_url", track.preview_url)}
+        {/* {console.log("track.preview_url", track.preview_url)} */}
         </audio>
       </div>
     );
   });
+
 
   //on map l'état artistImages pour afficher les images
   const artistsResults = artists.map((artist, index) => {
@@ -124,15 +129,7 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
     );
   });
 
-  //on map sur tracks pour afficher les tracks
-  const tracksComponent = tracks.map((track, index) => (
-    <div className="h-1/3" key={index}>
-    <ReactPlayer controls url='{track.preview_url}' type="MIME" />
 
-
-      {/* Lien vers l'album sur Spotify */}
-    </div>
-  ));
 
   return (
     <div className="h-screen w-full p-5 dark:bg-black bg-white font-sans flex">
