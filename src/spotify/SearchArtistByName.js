@@ -1,26 +1,28 @@
+export default async function SearchArtistByName(accessToken, artistName) {
+  try {
+    console.log("artistName", artistName);
 
-    export default async function SearchArtistByName(accessToken, artistName) {
-        if(!artistName) return 
-        else {
+    // Encode the artist name to make it URL-safe
+    const encodedArtistName = encodeURIComponent(artistName);
+    const url = `https://api.spotify.com/v1/search?q=${encodedArtistName}&type=artist&limit=1&include_external=audio`;
 
-          const url = `https://api.spotify.com/v1/search?q=${artistName}&type=artist`;
-      
-          const response = await fetch(url, {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }).catch((error) => console.error("Erreur de réseau:", error));
-      
-          if (response && response.ok) {
-            const data = await response.json();
-            return data.artists.items; // Retourne une liste d'artistes correspondant au nom de recherche
-            console.log("artists list", data.artists.items);
-          } else if (response) {
-            console.error("Erreur:", response.status, response.statusText);
-            return null;
-          }
-        }
-        
-      };
-    
+    const res = await fetch(url, {
+      method: "GET", // Correction de la faute de frappe ici
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (res && res.ok) {
+      const data = await res.json();
+      console.log("artists list", data.artists.items);
+      return data.artists.items; // Retourne une liste d'artistes
+    } else {
+      // Gestion des erreurs de réponse
+      console.error("Erreur:", res.status, res.statusText);
+      return null;
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}

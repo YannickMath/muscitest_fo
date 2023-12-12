@@ -11,7 +11,7 @@ export default function SpConnection(setAccessToken) {
     const formBody = Object.keys(details)
           .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(details[key]))
           .join('&');
-    
+
         fetch(url, {
           method: "POST",
           headers: {
@@ -22,11 +22,10 @@ export default function SpConnection(setAccessToken) {
         .then(response => response.json())
         .then(data => {
           setAccessToken(data.access_token); // Mise à jour de l'état accessToken
-          console.log("data", data);
           console.log("Connecté à Spotify");
         })
         .catch(error => {
           console.error("Erreur:", error);
         });
-      
+
 }

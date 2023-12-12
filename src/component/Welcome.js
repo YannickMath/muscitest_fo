@@ -9,7 +9,7 @@ import SearchArtistByName from "../spotify/SearchArtistByName";
 import Tracks from "./Tracks";
 import SearchTracksById from "@/spotify/SearchTracksById";
 import ReactPlayer from "react-player";
-
+import Loader from "./Loader";
 
 export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
   const dispatch = useDispatch();
@@ -73,73 +73,103 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
   // Effet pour appeler SearchTracksById chaque fois que accessToken ou artistIds change
   useEffect(() => {
     if (accessToken && artistIds.length > 0) {
+      setTracks([]); // Réinitialisation de l'état tracks
       // Fonction pour récupérer les pistes pour un ensemble d'artistIds
       const fetchTracks = async () => {
         const newTracks = [];
         for (const artistId of artistIds) {
           const trackData = await SearchTracksById(accessToken, artistId);
-          // console.log("trackData", trackData);
+          console.log("trackData", trackData);
 
-          if (trackData && trackData.tracks && Array.isArray(trackData.tracks)) { // Vérification ajoutée pour s'assurer que trackData.tracks est un tableau
+          if (
+            trackData &&
+            trackData.tracks &&
+            Array.isArray(trackData.tracks)
+          ) {
+            // Vérification ajoutée pour s'assurer que trackData.tracks est un tableau
             newTracks.push(...trackData.tracks);
           }
         }
-        setTracks(newTracks);
-      };
 
-      fetchTracks();
+        setTracks(newTracks);
+        console.log("newTracks", newTracks);
+      };
+      fetchTracks()
     }
   }, [accessToken, artistIds]);
 
+  // function tracksByArtistId(artistIds) {
+  //   tracks.map((track, artistIds) => {
+  //     if (track.artists[0].id === artistIds) {
+  //       console.log("track", track);
+  //       return track;
+  //     }
+  //   });
+  // }
   //on map l'état tracks pour afficher les tracks
   console.log("tracks", tracks);
   const track = tracks.map((track, index) => {
-    const tracksByArtistId = tracks.filter(e => e === e.artists[0].id)
-    console.log("tracksByArtistId", tracksByArtistId)
-    console.log("track.id", track.artists[0].id)
+    // tracksByArtistId(artistIds);
+    console.log("tracksByArtist", tracksByArtist);
+
     return (
-      <div className=" h-1/3" key={index}>
-        <audio controls>
-        {tracks && tracks.length > 0 && <source src={track.preview_url} type="audio/mpeg" />}
-        {/* {console.log("track.preview_url", track.preview_url)} */}
+      <div className=" h-15" key={index}>
+        <p>{track.name}</p>
+        <audio controls className="h-5">
+          {tracks && tracks.length > 0 && (
+            <source src={track.preview_url} type="audio/mpeg" />
+          )}
+          {/* {console.log("track.preview_url", track.preview_url)} */}
         </audio>
       </div>
     );
   });
 
-
   //on map l'état artistImages pour afficher les images
   const artistsResults = artists.map((artist, index) => {
+    const handleGoToSpotify = () => {
+      window.open(artist.external_urls.spotify);
+    };
+
     return (
-      <div className=" h-1/3" key={index}>
-        {artist.images && artist.images.length > 0 && (
-          <Image
-            src={artist.images[0].url}
-            alt="Artist"
-            width={140}
-            height={120}
-            className="inline-block rounded-full"
-          />
-        )}
-        <p>{artist.name}</p>
-        {artist.genres.map((genre, genreIndex) => {
-          return <p key={genreIndex}>{genre}</p>;
-        })}
+      <div className=" h-1/3 dark:color-white" key={index}>
+        <div className="cursor-pointer flex flex-row justify-center items-center  dark:border-2 dark:border-white dark:rounded-2xl">
+          {artist.images && artist.images.length > 0 && (
+            <Image
+              src={artist.images[0].url}
+              alt="Artist"
+              width={140}
+              height={120}
+              className="inline-block rounded-full"
+              onClick={handleGoToSpotify}
+              style={{
+                border: isDarkMode ? "1px solid black" : "1px solid white",
+              }}
+            />
+          )}
+        </div>
+
+        <p className="flex flex-col justify-center items-center ">
+          {artist.name}
+        </p>
+        <div className="flex flex-raw justify-center items-center ">
+          {artist.genres.map((genre, genreIndex) => {
+            return <p key={genreIndex}>{genre}</p>;
+          })}
+        </div>
       </div>
     );
   });
 
-
-
   return (
-    <div className="h-screen w-full p-5 dark:bg-black bg-white font-sans flex">
-      <div>
+    <div className="flex flex-col h-screen w-full p-5 dark:bg-black bg-white font-sans items-center justify-around md:flex-row">
+      <div className="flex-1 p-2 md:w-full md:flex md:flex-col md:items-center md:justify-start">
         <h1>Home Page</h1>
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
           onClick={handleLoginButton}
         >
-          Button
+          Login
         </button>
         {modal && (
           <Modal
@@ -170,7 +200,7 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
           value={artistName}
         />
         <button
-          className="cursor-pointer"
+          className="cursor-pointer dark:text-white"
           // onClick={() => {SearchArtistByName}}
           onClick={() => {
             handleSearch(accessToken, artistName);
@@ -178,10 +208,13 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
         >
           Search
         </button>
-        {artistsResults}
-        {/* <Tracks /> */}
       </div>
-      <div>{track}</div>
+      <div className="flex-1 p-2 md:w-full md:items-center md:justify-center md:flex md:flex-col">
+        {artistsResults}
+      </div>
+      <div className="flex-1 p-2 md:w-full md:items-center md:justify-center md:flex md:flex-col">
+        {track}
+      </div>
     </div>
   );
 }
