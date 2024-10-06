@@ -61,7 +61,7 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
   }, [artists]);
 
   useEffect(() => {
-    if (accessToken && artistIds.length > 0) {
+    if (accessToken && artistIds?.length > 0) {
       setTracks([]);
       const fetchTracks = async () => {
         const newTracks = [];
@@ -89,7 +89,7 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
       >
         <p className="font-bold text-lg dark:text-white">{track.name}</p>
         <audio controls className="w-full mt-2">
-          {tracks && tracks.length > 0 && (
+          {tracks && tracks?.length > 0 && (
             <source src={track.preview_url} type="audio/mpeg" />
           )}
         </audio>
@@ -107,7 +107,7 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
         className="flex flex-col items-center justify-center my-4 p-4 bg-gray-200 dark:bg-gray-800 rounded-lg shadow-lg cursor-pointer transition-transform hover:scale-105"
         key={index}
       >
-        {artist.images && artist.images.length > 0 && (
+        {artist.images && artist.images?.length > 0 && (
           <Image
             src={artist.images[0].url}
             alt="Artist"
