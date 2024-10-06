@@ -32,9 +32,12 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
 
   // fonction pour lancer la recherche d'artiste
   const handleSearch = async () => {
-    if (accessToken) {
+    console.log("accessToken", accessToken);
+    console.log("artistName", artistName);
+    if (accessToken && artistName !== null) {
       try {
         const result = await SearchArtistByName(accessToken, artistName);
+        console.log("result", result);
         setArtists(result);
       } catch (err) {
         console.log(err.status);
@@ -66,7 +69,7 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
 
   // Effet pour mettre à jour artistIds chaque fois que artists change
   useEffect(() => {
-    setArtistIds(artists.map((artist) => artist.id));
+    setArtistIds(artists?.map((artist) => artist.id));
   }, [artists]);
   // console.log("artistIds", artistIds)
 
@@ -94,7 +97,7 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
         setTracks(newTracks);
         console.log("newTracks", newTracks);
       };
-      fetchTracks()
+      fetchTracks();
     }
   }, [accessToken, artistIds]);
 
@@ -126,7 +129,7 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
   });
 
   //on map l'état artistImages pour afficher les images
-  const artistsResults = artists.map((artist, index) => {
+  const artistsResults = artists?.map((artist, index) => {
     const handleGoToSpotify = () => {
       window.open(artist.external_urls.spotify);
     };
