@@ -1,15 +1,13 @@
-import Modal from "./Modal";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+
+import Modal from "./Modal";
 import { addUsernameToStore } from "@/reducer/user.slice";
 import { MdDarkMode, MdOutlineDarkMode } from "react-icons/md";
 import Image from "next/image";
 import SpConnection from "../spotify/SpConnection";
 import SearchArtistByName from "../spotify/SearchArtistByName";
-import Tracks from "./Tracks";
 import SearchTracksById from "@/spotify/SearchTracksById";
-import ReactPlayer from "react-player";
-import Loader from "./Loader";
 
 export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
   const dispatch = useDispatch();
@@ -86,7 +84,7 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
   const track = tracks.map((track, index) => {
     return (
       <div
-        className="flex flex-col items-center justify-center my-4 p-4 bg-gray-200 dark:bg-gray-800 rounded-lg shadow-lg"
+        className="flex flex-col md:w-1/2 items-center justify-center my-4 p-4 bg-gray-200 dark:bg-gray-800 rounded-lg shadow-lg"
         key={index}
       >
         <p className="font-bold text-lg dark:text-white">{track.name}</p>
@@ -137,60 +135,72 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
   });
 
   return (
-    <div className="flex flex-col h-screen w-full p-5 dark:bg-black bg-white font-sans items-center justify-around md:flex-row space-y-6">
-      <div className="flex-1 p-2 md:w-full md:flex md:flex-col md:items-center md:justify-start">
-        <h1 className="text-3xl font-bold dark:text-white mb-4">
-          Discover Artists
-        </h1>
-        <button
+    <div className="flex flex-col w-full p-5 dark:bg-black bg-white font-sans items-center justify-around md:flex-row space-y-6">
+      <div className="md:flex md:flex-col w-full justify-around gap-10">
+        <div className="md:flex md:flex-row">
+          <div className="flex-1 p-2 md:w-full flex flex-col items-center justify-center">
+            <h1 className="text-3xl font-bold h-full flex flex-row items-center dark:text-white">
+              Discover Artists
+            </h1>
+            {/* <button
           className="bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-6 rounded-full transition-all duration-300 ease-in-out"
           onClick={handleLoginButton}
-        >
-          Login
-        </button>
-        {modal && (
-          <Modal
-            setModal={setModal}
-            handleLoginSubmit={handleLoginSubmit}
-            handleOnChangeUserName={handleOnChangeUserName}
-            userName={userName}
-            setUserName={setUserName}
-          />
-        )}
-        <div className="flex mt-6">
-          {!isDarkMode ? (
-            <MdDarkMode
-              className="text-3xl cursor-pointer hover:text-gray-500 transition duration-300"
-              onClick={toogleDarkMode}
-            />
-          ) : (
-            <MdOutlineDarkMode
-              className="text-3xl cursor-pointer dark:text-white hover:text-gray-300 transition duration-300"
-              onClick={toogleDarkMode}
-            />
-          )}
-        </div>
-        <div className="relative mt-6">
-          <input
-            onChange={handleArtistName}
-            type="text"
-            placeholder="Search artist"
-            value={artistName}
-            className="p-3 pl-10 rounded-lg w-full border-2 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-          <button
-            className="mt-4 bg-blue-500 hover:bg-blue-700 text-white py-2 px-6 rounded-lg"
-            onClick={handleSearch}
           >
-            Search
-          </button>
+          Login
+          </button> */}
+            {modal && (
+              <Modal
+                setModal={setModal}
+                handleLoginSubmit={handleLoginSubmit}
+                handleOnChangeUserName={handleOnChangeUserName}
+                userName={userName}
+                setUserName={setUserName}
+              />
+            )}
+            <div className="flex mt-6">
+              {!isDarkMode ? (
+                <div className="flex flexc-row gap-4 items-center">
+                  <p className="text-black text--lg">Theme</p>
+                  <MdDarkMode
+                    className="text-3xl cursor-pointer hover:text-gray-500 transition duration-300"
+                    onClick={toogleDarkMode}
+                  />
+                </div>
+              ) : (
+                <div className="flex flexc-row gap-4 items-center">
+                  <p className="text-white text--lg">Theme</p>
+                  <MdOutlineDarkMode
+                    className="text-3xl cursor-pointer dark:text-white hover:text-gray-300 transition duration-300"
+                    onClick={toogleDarkMode}
+                  />
+                </div>
+              )}
+            </div>
+            <div className="relative mt-6">
+              <input
+                onChange={handleArtistName}
+                type="text"
+                placeholder="Search artist"
+                value={artistName}
+                className="p-2 rounded-lg w-full border-2 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+              <div className="flex items-center justify-center">
+                <button
+                  className="mt-4 bg-blue-500 hover:bg-blue-700 text-white py-2 px-6 rounded-lg"
+                  onClick={handleSearch}
+                >
+                  Search
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="flex-1 p-2 md:w-full md:items-center md:justify-center md:flex md:flex-col space-y-6">
+            {artistsResults}
+          </div>
         </div>
-      </div>
-      <div className="flex-1 p-2 md:w-full md:items-center md:justify-center md:flex md:flex-col space-y-6">
-        {artistsResults}
-      </div>
-      <div className="flex-1 p-2 md:w-full md:items-center md:justify-center md:flex md:flex-col space-y-6">
-        {track}
+        <div className="flex-1 p-2 dark:bg-black md:w-full md:items-center md:justify-center md:flex md:flex-col space-y-6">
+          {track}
+        </div>
       </div>
     </div>
   );
