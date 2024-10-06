@@ -23,21 +23,16 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
   const [artists, setArtists] = useState([]); // Ajout de l'état artists
   const [artistIds, setArtistIds] = useState(""); // Ajout de l'état artistId
   const [tracks, setTracks] = useState([]); // Ajout de l'état tracks
-  const [tracksByArtist, setTracksByArtist] = useState([]); // Ajout de l'état tracksByArtist
 
   //initialisation api spotify
   useEffect(() => {
     SpConnection(setAccessToken);
   }, []);
 
-  // fonction pour lancer la recherche d'artiste
   const handleSearch = async () => {
-    console.log("accessToken", accessToken);
-    console.log("artistName", artistName);
     if (accessToken && artistName !== null) {
       try {
         const result = await SearchArtistByName(accessToken, artistName);
-        console.log("result", result);
         setArtists(result);
       } catch (err) {
         console.log(err.status);
@@ -45,119 +40,96 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
     }
   };
 
-  //mise à jour de l'état artistName
   const handleArtistName = (e) => {
     e.preventDefault();
     setArtistName(e.target.value);
   };
 
-  // mise à jour de l'état userName
   const handleOnChangeUserName = (e) => {
     setUserName(e.target.value);
   };
 
-  // mise à jour de l'état modal
   const handleLoginButton = () => {
     setModal(true);
   };
 
-  // mise à jour de l'état modal et dispatch de l'action addUsernameToStore
   const handleLoginSubmit = () => {
     setModal(false);
     dispatch(addUsernameToStore(userName));
   };
 
-  // Effet pour mettre à jour artistIds chaque fois que artists change
   useEffect(() => {
     setArtistIds(artists?.map((artist) => artist.id));
   }, [artists]);
-  // console.log("artistIds", artistIds)
 
-  // Effet pour appeler SearchTracksById chaque fois que accessToken ou artistIds change
   useEffect(() => {
     if (accessToken && artistIds.length > 0) {
-      setTracks([]); // Réinitialisation de l'état tracks
-      // Fonction pour récupérer les pistes pour un ensemble d'artistIds
+      setTracks([]);
       const fetchTracks = async () => {
         const newTracks = [];
         for (const artistId of artistIds) {
           const trackData = await SearchTracksById(accessToken, artistId);
-          console.log("trackData", trackData);
-
           if (
             trackData &&
             trackData.tracks &&
             Array.isArray(trackData.tracks)
           ) {
-            // Vérification ajoutée pour s'assurer que trackData.tracks est un tableau
             newTracks.push(...trackData.tracks);
           }
         }
-
         setTracks(newTracks);
-        console.log("newTracks", newTracks);
       };
       fetchTracks();
     }
   }, [accessToken, artistIds]);
 
-  // function tracksByArtistId(artistIds) {
-  //   tracks.map((track, artistIds) => {
-  //     if (track.artists[0].id === artistIds) {
-  //       console.log("track", track);
-  //       return track;
-  //     }
-  //   });
-  // }
-  //on map l'état tracks pour afficher les tracks
-  console.log("tracks", tracks);
   const track = tracks.map((track, index) => {
-    // tracksByArtistId(artistIds);
-    console.log("tracksByArtist", tracksByArtist);
-
     return (
-      <div className=" h-15" key={index}>
-        <p>{track.name}</p>
-        <audio controls className="h-5">
+      <div
+        className="flex flex-col items-center justify-center my-4 p-4 bg-gray-200 dark:bg-gray-800 rounded-lg shadow-lg"
+        key={index}
+      >
+        <p className="font-bold text-lg dark:text-white">{track.name}</p>
+        <audio controls className="w-full mt-2">
           {tracks && tracks.length > 0 && (
             <source src={track.preview_url} type="audio/mpeg" />
           )}
-          {/* {console.log("track.preview_url", track.preview_url)} */}
         </audio>
       </div>
     );
   });
 
-  //on map l'état artistImages pour afficher les images
   const artistsResults = artists?.map((artist, index) => {
     const handleGoToSpotify = () => {
       window.open(artist.external_urls.spotify);
     };
 
     return (
-      <div className=" h-1/3 dark:color-white" key={index}>
-        <div className="cursor-pointer flex flex-row justify-center items-center  dark:border-2 dark:border-white dark:rounded-2xl">
-          {artist.images && artist.images.length > 0 && (
-            <Image
-              src={artist.images[0].url}
-              alt="Artist"
-              width={140}
-              height={120}
-              className="inline-block rounded-full"
-              onClick={handleGoToSpotify}
-              style={{
-                border: isDarkMode ? "1px solid black" : "1px solid white",
-              }}
-            />
-          )}
-        </div>
-
-        <p className="flex flex-col justify-center items-center ">
-          {artist.name}
-        </p>
-        <div className="flex flex-raw justify-center items-center ">
+      <div
+        className="flex flex-col items-center justify-center my-4 p-4 bg-gray-200 dark:bg-gray-800 rounded-lg shadow-lg cursor-pointer transition-transform hover:scale-105"
+        key={index}
+      >
+        {artist.images && artist.images.length > 0 && (
+          <Image
+            src={artist.images[0].url}
+            alt="Artist"
+            width={140}
+            height={120}
+            className="rounded-full"
+            onClick={handleGoToSpotify}
+          />
+        )}
+        <p className="mt-2 font-bold dark:text-white">{artist.name}</p>
+        <div className="flex flex-wrap justify-center">
           {artist.genres.map((genre, genreIndex) => {
-            return <p key={genreIndex}>{genre}</p>;
+            return (
+              <span
+                className="mx-1 px-2 py-1 bg-blue-500 text-white text-xs rounded-full"
+                key={genreIndex}
+              >
+                {genre}
+              </span>
+            );
           })}
         </div>
       </div>
@@ -165,11 +137,13 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
   });
 
   return (
-    <div className="flex flex-col h-screen w-full p-5 dark:bg-black bg-white font-sans items-center justify-around md:flex-row">
+    <div className="flex flex-col h-screen w-full p-5 dark:bg-black bg-white font-sans items-center justify-around md:flex-row space-y-6">
       <div className="flex-1 p-2 md:w-full md:flex md:flex-col md:items-center md:justify-start">
-        <h1>Home Page</h1>
+        <h1 className="text-3xl font-bold dark:text-white mb-4">
+          Discover Artists
+        </h1>
         <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+          className="bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-6 rounded-full transition-all duration-300 ease-in-out"
           onClick={handleLoginButton}
         >
           Login
@@ -183,39 +157,39 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
             setUserName={setUserName}
           />
         )}
-        <div>
+        <div className="flex mt-6">
           {!isDarkMode ? (
             <MdDarkMode
-              className=" hover:cursor-pointer  "
+              className="text-3xl cursor-pointer hover:text-gray-500 transition duration-300"
               onClick={toogleDarkMode}
             />
           ) : (
             <MdOutlineDarkMode
-              className=" hover:cursor-pointer dark:text-white "
+              className="text-3xl cursor-pointer dark:text-white hover:text-gray-300 transition duration-300"
               onClick={toogleDarkMode}
             />
           )}
         </div>
-        <input
-          onChange={handleArtistName}
-          type="text"
-          placeholder="Search artist"
-          value={artistName}
-        />
-        <button
-          className="cursor-pointer dark:text-white"
-          // onClick={() => {SearchArtistByName}}
-          onClick={() => {
-            handleSearch(accessToken, artistName);
-          }}
-        >
-          Search
-        </button>
+        <div className="relative mt-6">
+          <input
+            onChange={handleArtistName}
+            type="text"
+            placeholder="Search artist"
+            value={artistName}
+            className="p-3 pl-10 rounded-lg w-full border-2 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          <button
+            className="mt-4 bg-blue-500 hover:bg-blue-700 text-white py-2 px-6 rounded-lg"
+            onClick={handleSearch}
+          >
+            Search
+          </button>
+        </div>
       </div>
-      <div className="flex-1 p-2 md:w-full md:items-center md:justify-center md:flex md:flex-col">
+      <div className="flex-1 p-2 md:w-full md:items-center md:justify-center md:flex md:flex-col space-y-6">
         {artistsResults}
       </div>
-      <div className="flex-1 p-2 md:w-full md:items-center md:justify-center md:flex md:flex-col">
+      <div className="flex-1 p-2 md:w-full md:items-center md:justify-center md:flex md:flex-col space-y-6">
         {track}
       </div>
     </div>
