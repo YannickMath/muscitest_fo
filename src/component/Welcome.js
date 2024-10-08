@@ -136,7 +136,7 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
 
   return (
     <div
-      className={`flex flex-col w-full p-5 h-4/5 dark:bg-black bg-white font-sans items-center justify-around space-y-6`}
+      className={`flex flex-col w-full h-4/5 dark:bg-black bg-white font-sans items-center justify-around space-y-6`}
     >
       <div className="md:flex md:flex-col w-full justify-around gap-10">
         <div className="md:flex md:flex-row">
@@ -196,7 +196,7 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
               </div>
             </div>
           </div>
-          <div className="flex-1 p-2 md:w-full md:items-center md:justify-center md:flex md:flex-col space-y-6">
+          <div className="flex-1 md:w-full md:items-center md:justify-center md:flex md:flex-col space-y-6">
             {artistsResults}
           </div>
         </div>

@@ -1,10 +1,14 @@
-import { Inter } from 'next/font/google'
-import Welcome from '../component/Welcome'
+import { Inter } from "next/font/google";
+import Welcome from "../component/Welcome";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] });
 
-export default function Home({isDarkMode, setIsDarkMode, toogleDarkMode}) {
+export default function Home({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
   return (
-  <Welcome isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} toogleDarkMode={toogleDarkMode}/>
-  )
+    <Welcome
+      isDarkMode={isDarkMode}
+      setIsDarkMode={setIsDarkMode}
+      toogleDarkMode={toogleDarkMode}
+    />
+  );
 }

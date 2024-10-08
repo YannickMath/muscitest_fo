@@ -3,9 +3,7 @@ import Image from "next/image";
 export default function Header({ isDarkMode }) {
   console.log("isDarkMode2 ", isDarkMode);
 
-  const logoUrl = isDarkMode
-    ? "/spotify-logo-primary-horizontal-green-background-rgb_0.png"
-    : "/spotify-logo-primary-horizontal-dark-background-rgb_0.png";
+  const logoUrl = "/logoTest.webp";
 
   return (
     <div
