@@ -13,14 +13,13 @@ export default function Welcome({ isDarkMode, setIsDarkMode, toogleDarkMode }) {
   const dispatch = useDispatch();
   const username = useSelector((state) => state.user.username);
 
-  // déclaration des états
   const [modal, setModal] = useState(false);
   const [userName, setUserName] = useState("");
-  const [accessToken, setAccessToken] = useState(null); // Ajout de l'état accessToken
-  const [artistName, setArtistName] = useState(""); // Ajout de l'état artistName
-  const [artists, setArtists] = useState([]); // Ajout de l'état artists
-  const [artistIds, setArtistIds] = useState(""); // Ajout de l'état artistId
-  const [tracks, setTracks] = useState([]); // Ajout de l'état tracks
+  const [accessToken, setAccessToken] = useState(null);
+  const [artistName, setArtistName] = useState("");
+  const [artists, setArtists] = useState([]);
+  const [artistIds, setArtistIds] = useState("");
+  const [tracks, setTracks] = useState([]);
 
   //initialisation api spotify
   useEffect(() => {
